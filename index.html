@@ -72,4 +72,5 @@ function setLang(x){b.dataset.lang=x;h.lang=x;h.dir=x==="ar"?"rtl":"ltr";btn.tex
 let s="ar";try{s=localStorage.getItem("enjazatiLang")||"ar"}catch(e){}
 setLang(s==="en"?"en":"ar");btn.onclick=()=>setLang(b.dataset.lang==="ar"?"en":"ar");
 </script>
+<!-- redeploy after custom-domain removal -->
 </body></html>
