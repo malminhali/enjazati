@@ -432,6 +432,83 @@ body[data-lang="en"] h1{
   .head{align-items:start!important}
 }
 
+
+/* Enjazati auto slideshow */
+.showcase{overflow:hidden}
+.showcase-slider{
+  position:relative;
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) 44px;
+  align-items:center;
+  gap:12px;
+}
+.showcase-window{
+  overflow:hidden;
+  border-radius:23px;
+  background:#eef5f4;
+  box-shadow:0 16px 34px rgba(0,44,43,.12);
+  touch-action:pan-y;
+}
+.showcase-poster{
+  width:100%;
+  aspect-ratio:1/1;
+  background-image:url('/assets/slides/enjazati-launch-grid.webp');
+  background-repeat:no-repeat;
+  background-size:100% 900%;
+  background-position:center 0%;
+  transition:background-position .58s cubic-bezier(.2,.75,.25,1);
+  will-change:background-position;
+}
+.showcase-arrow{
+  width:44px;height:44px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:#fff;
+  color:var(--brand);
+  font-size:1.75rem;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  box-shadow:0 9px 20px rgba(0,44,43,.08);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.showcase-arrow:hover{transform:translateY(-2px);box-shadow:0 13px 24px rgba(0,44,43,.13)}
+.showcase-dots{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+  margin-top:15px;
+}
+.showcase-dots button{
+  width:8px;height:8px;
+  border:0;padding:0;
+  border-radius:999px;
+  background:#c9d8d6;
+  cursor:pointer;
+  transition:width .2s ease,background .2s ease;
+}
+.showcase-dots button.active{
+  width:24px;
+  background:var(--gold);
+}
+@media(max-width:760px){
+  .showcase-slider{
+    grid-template-columns:34px minmax(0,1fr) 34px;
+    gap:7px;
+  }
+  .showcase-arrow{
+    width:34px;height:34px;
+    font-size:1.4rem;
+  }
+  .showcase-window{border-radius:18px}
+}
+@media(max-width:390px){
+  .showcase-slider{grid-template-columns:30px minmax(0,1fr) 30px;gap:5px}
+  .showcase-arrow{width:30px;height:30px;font-size:1.25rem}
+}
+
 /* Arabic mobile polish v2 */
 @media(max-width:760px){
   body[data-lang="ar"] .hero{
@@ -542,6 +619,21 @@ body[data-lang="en"] h1{
 <a class="social" href="https://x.com/enjazati_est" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2H21l-6.1 7 7.2 13H16.5l-4.4-5.8L7 22H4.2l6.6-7.6L3.9 2h5.7l4 5.3L18.2 2Zm-1 17.7h1.6L8.7 4.2H7L17.2 19.7Z"/></svg><span>X</span></a>
 </div>
 </section>
+
+<section class="showcase" id="enjazatiShowcase">
+  <div class="head">
+    <h2><span class="ar">تعرف على إنجازاتي</span><span class="en">Explore Enjazati</span></h2>
+    <small><span class="ar">مختارات من محتوى إنجازاتي</span><span class="en">Enjazati highlights</span></small>
+  </div>
+  <div class="showcase-slider" aria-label="Enjazati highlights">
+    <button class="showcase-arrow showcase-prev" type="button" aria-label="Previous">‹</button>
+    <div class="showcase-window">
+      <div class="showcase-poster" id="showcasePoster" role="img" aria-label="Enjazati promotional poster"></div>
+    </div>
+    <button class="showcase-arrow showcase-next" type="button" aria-label="Next">›</button>
+  </div>
+  <div class="showcase-dots" id="showcaseDots" aria-label="Slideshow navigation"></div>
+</section>
 <div class="sep"></div>
 <section>
 <div class="head"><h2><span class="ar">فروعنا</span><span class="en">Our branches</span></h2><small><span class="ar">اضغط لفتح الموقع</span><span class="en">Tap to open map</span></small></div>
@@ -560,5 +652,66 @@ function setLang(x){b.dataset.lang=x;h.lang=x;h.dir=x==="ar"?"rtl":"ltr";btn.tex
 let s="ar";try{s=localStorage.getItem("enjazatiLang")||"ar"}catch(e){}
 setLang(s==="en"?"en":"ar");btn.onclick=()=>setLang(b.dataset.lang==="ar"?"en":"ar");
 </script>
+
+<script>
+(() => {
+  const showcasePoster=document.getElementById('showcasePoster');
+  const dotsWrap=document.getElementById('showcaseDots');
+  const prev=document.querySelector('.showcase-prev');
+  const next=document.querySelector('.showcase-next');
+  const slider=document.querySelector('.showcase-slider');
+  if(!showcasePoster||!dotsWrap||!prev||!next||!slider) return;
+
+  const count=9;
+  let current=0;
+  let timer=null;
+  let touchStartX=0;
+
+  function setSlide(index,userAction){
+    current=(index+count)%count;
+    showcasePoster.style.backgroundPosition='center '+(current*12.5)+'%';
+    Array.from(dotsWrap.children).forEach((d,i)=>d.classList.toggle('active',i===current));
+    if(userAction) restart();
+  }
+  function nextSlide(){ setSlide(current+1,false); }
+  function start(){ stop(); timer=setInterval(nextSlide,4300); }
+  function stop(){ if(timer){clearInterval(timer);timer=null;} }
+  function restart(){ start(); }
+
+  for(let i=0;i<count;i++){
+    const dot=document.createElement('button');
+    dot.type='button';
+    dot.setAttribute('aria-label','Slide '+(i+1));
+    dot.addEventListener('click',()=>setSlide(i,true));
+    dotsWrap.appendChild(dot);
+  }
+
+  next.addEventListener('click',()=>setSlide(current+1,true));
+  prev.addEventListener('click',()=>setSlide(current-1,true));
+
+  slider.addEventListener('mouseenter',stop);
+  slider.addEventListener('mouseleave',start);
+  slider.addEventListener('focusin',stop);
+  slider.addEventListener('focusout',start);
+
+  slider.addEventListener('touchstart',e=>{
+    touchStartX=e.changedTouches[0].clientX;
+    stop();
+  },{passive:true});
+  slider.addEventListener('touchend',e=>{
+    const diff=touchStartX-e.changedTouches[0].clientX;
+    if(Math.abs(diff)>35){
+      setSlide(current+(diff>0?1:-1),false);
+    }
+    start();
+  },{passive:true});
+
+  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+
+  setSlide(0,false);
+  start();
+})();
+</script>
+
 <!-- redeploy after custom-domain removal -->
 </body></html>
