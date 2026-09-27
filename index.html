@@ -674,7 +674,7 @@ setLang(s==="en"?"en":"ar");btn.onclick=()=>setLang(b.dataset.lang==="ar"?"en":"
     if(userAction) restart();
   }
   function nextSlide(){ setSlide(current+1,false); }
-  function start(){ stop(); timer=setInterval(nextSlide,4300); }
+  function start(){ stop(); timer=setInterval(nextSlide,3000); }
   function stop(){ if(timer){clearInterval(timer);timer=null;} }
   function restart(){ start(); }
 
