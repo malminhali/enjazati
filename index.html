@@ -21,7 +21,7 @@
 <meta name="twitter:title" content="مجموعة إنجازاتي">
 <meta name="twitter:description" content="خدمات إلكترونية وحلول أعمال">
 <meta name="twitter:image" content="https://enjazati.sa/social-preview.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23043f3e'/%3E%3Cpath d='M17 17h30v8H27v7h17v8H27v7h20v8H17z' fill='%23fdbb12'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <title>مجموعة إنجازاتي | Enjazati</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -324,6 +324,31 @@ a.branch:hover{
 .nolink .map{
   color:#879997!important;
   background:#f1f4f3;
+}
+
+
+/* Arabic desktop correction */
+body[data-lang="ar"] .hero{
+  text-align:right!important;
+}
+body[data-lang="ar"] .hero:before{
+  inset:0 62% 0 0;
+  width:38%;
+}
+body[data-lang="ar"] .hero:after{
+  inset:-145px auto auto -115px;
+}
+body[data-lang="ar"] h1{
+  font-size:clamp(1.85rem,4.15vw,2.5rem)!important;
+  line-height:1.6!important;
+  letter-spacing:0!important;
+}
+body[data-lang="ar"] .tag{
+  letter-spacing:0!important;
+}
+body[data-lang="ar"] .sub{
+  margin-right:0!important;
+  margin-left:auto!important;
 }
 
 /* English direction */
