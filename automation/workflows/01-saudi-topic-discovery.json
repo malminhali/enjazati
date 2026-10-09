@@ -1,0 +1,105 @@
+{
+  "name": "Enjazati — Saudi Topic Discovery (Research Only)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "Run Research Now",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily",
+      "name": "Daily 08:00 Riyadh",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=%22%D9%82%D9%88%D9%89%22%20OR%20%22%D8%A8%D9%84%D8%AF%D9%8A%22%20OR%20%22%D9%86%D8%A7%D8%AC%D8%B2%22%20OR%20%22%D8%A3%D8%A8%D8%B4%D8%B1%22%20OR%20%22%D9%85%D8%B3%D8%A7%D9%86%D8%AF%22%20when%3A7d&hl=ar&gl=SA&ceid=SA%3Aar"
+      },
+      "id": "rss",
+      "name": "Discover Saudi Service Coverage",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        520,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const keywords = ['قوى','بلدي','ناجز','أبشر','مساند','مدد','وزارة الموارد','الجوازات','وزارة العدل','تأشيرة','إقامة','رخصة','سجل تجاري','الزكاة','الضريبة'];\nconst seen = new Set();\nconst results = [];\nfor (const item of $input.all()) {\n  const d = item.json;\n  const title = String(d.title || '').trim();\n  const link = String(d.link || '').trim();\n  if (!title || !link) continue;\n  const key = title.toLocaleLowerCase('ar').replace(/\\s+/g,' ');\n  if (seen.has(key)) continue;\n  seen.add(key);\n  const matched = keywords.filter(k => key.includes(k));\n  if (!matched.length) continue;\n  results.push({json:{title,discovery_url:link,source_name:String(d.creator || d.author || 'Google News RSS'),published_at:d.isoDate || d.pubDate || null,matched_keywords:matched,relevance_score:matched.length,verification_status:'UNVERIFIED',publish_allowed:false,next_step:'Find the original official Saudi government source; verify each factual claim and its effective date before creating content.'}});\n}\nresults.sort((a,b)=>b.json.relevance_score-a.json.relevance_score);\nreturn results.slice(0,15);"
+      },
+      "id": "triage",
+      "name": "Deduplicate and Mark UNVERIFIED",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        320
+      ]
+    }
+  ],
+  "connections": {
+    "Run Research Now": {
+      "main": [
+        [
+          {
+            "node": "Discover Saudi Service Coverage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 08:00 Riyadh": {
+      "main": [
+        [
+          {
+            "node": "Discover Saudi Service Coverage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discover Saudi Service Coverage": {
+      "main": [
+        [
+          {
+            "node": "Deduplicate and Mark UNVERIFIED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Asia/Riyadh",
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "tags": []
+}
