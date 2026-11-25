@@ -72,6 +72,13 @@ body[data-lang="en"] .hero:after{background:linear-gradient(270deg,transparent 2
 .hero-brand img{width:180px;height:155px;object-fit:contain;filter:none}
 .hero-brand-ar,.hero-brand-en{color:#043f3d;text-shadow:none}
 @media(max-width:760px){.hero-brand{padding:12px}.hero-brand:before{inset:0 0 -10px}.hero-brand img{width:112px;height:100px}}
+/* Explicit hero composition and logo legibility */
+.hero-brand{background:radial-gradient(ellipse at center,#fff8e8 0%,#fff8e8 32%,rgba(255,248,232,.92) 48%,rgba(255,248,232,.35) 68%,transparent 78%)!important;width:min(100%,460px);min-height:320px;justify-content:center;box-sizing:border-box}
+.hero-brand:before{display:none}
+.hero-brand img{width:190px;height:165px}
+.hero-brand-ar,.hero-brand-en{color:#043f3d}
+@media(min-width:1100px){.hero-inner{grid-template-columns:.72fr 1.28fr;gap:32px;padding:28px 0 60px}.hero h1{font-size:clamp(1.8rem,2.55vw,2.65rem);line-height:1.5}.hero-copy{width:100%}.hero,.hero-inner{min-height:440px}}
+@media(max-width:760px){.hero-brand{width:100%;min-height:0;height:200px;background:radial-gradient(ellipse at center,#fff8e8 0%,rgba(255,248,232,.94) 35%,transparent 72%)!important}.hero-brand img{width:112px;height:100px}}
 </style>
 </head>
 <body data-lang="ar">
