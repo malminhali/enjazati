@@ -244,3 +244,27 @@ if (typeof document !== 'undefined') {
   document.querySelectorAll('[data-calculator]').forEach(initCalculator);
 }
 if (typeof module === 'object') module.exports = { calculators, CalculatorInputError };
+
+if (typeof document !== 'undefined') {
+  const picker = document.getElementById('tool-picker');
+  if (picker) {
+    const panels = document.querySelectorAll('.tool-panel');
+    function showSelection() {
+      const selected = location.hash.slice(1);
+      picker.value = '';
+      for (const panel of panels) {
+        panel.hidden = panel.id !== selected;
+        if (!panel.hidden) picker.value = selected;
+      }
+    }
+    picker.addEventListener('change', () => {
+      const url = new URL(location.href);
+      url.hash = picker.value;
+      history.pushState(null, '', url);
+      showSelection();
+    });
+    window.addEventListener('popstate', showSelection);
+    window.addEventListener('hashchange', showSelection);
+    showSelection();
+  }
+}

@@ -202,3 +202,25 @@ input:focus-visible { outline: 3px solid #b38632; outline-offset: 3px; }
   margin-block-start: .3rem;
   accent-color: var(--green);
 }
+
+.tool-picker {
+  display: grid;
+  gap: .5rem;
+  max-width: 32rem;
+  font-weight: 600;
+}
+.tool-picker select {
+  width: 100%;
+  min-height: 48px;
+  padding-inline: .875rem;
+  font: inherit;
+  color: var(--ink);
+  background: white;
+  border: 1px solid #75877c;
+  border-radius: 8px;
+}
+.tool-panel[hidden], .tool-stack:not(:has(.tool-panel:not([hidden]))) { display: none; }
+.section:has(.tool-picker) { padding-block: clamp(20px, 3vw, 36px); }
+.mast p, .prose p { max-inline-size: 68ch; }
+.card p { font-size: .9375rem; }
+.card:hover { transform: none; }
