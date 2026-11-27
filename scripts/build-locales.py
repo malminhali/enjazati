@@ -14,6 +14,7 @@ LOCALES = {
     '/blog/annual-confirmation/': ('Annual commercial registration confirmation', 'Understand annual confirmation for Saudi sole proprietorships and companies, and find the relevant official service.'),
     '/blog/employee-transfer/': ('How does employee transfer work in Qiwa?', 'Identify the right employee transfer route and track the request in Qiwa.'),
     '/blog/health-certificate/': ('How do I start a Balady health certificate application?', 'Start a health certificate request in Balady and follow the required medical examination and education steps.'),
+    '/blog/real-estate-transaction-tax/': ('Real estate transaction tax: when does the 5% calculation apply?', 'The standard rate applies to taxable transactions. Check the tax treatment and taxable value before using the calculator.'),
     '/blog/municipal-licence/': ('Before applying for a shop licence', 'Check Saudi municipal requirements for your business activity and location before applying through Balady.'),
     '/blog/vat-inclusive-price/': ('How do I extract 15% VAT from an inclusive price?', 'Learn how to calculate Saudi standard-rate VAT when prices include or exclude tax.'),
     '/blog/verify-property-ad/': ('How do I verify a real estate advertisement licence?', 'Find the official REGA lookup and check a Saudi real estate advertisement or FAL licence.'),
@@ -108,7 +109,7 @@ def build():
         en = ar.replace('<html lang="ar" dir="rtl">', '<html lang="en" dir="ltr">', 1)
         en = en.replace('<body data-lang="ar"', '<body data-lang="en"', 1)
         en = NAV.sub(english_href, en)
-        en = en.replace('/fonts/enj-arabic.woff2" as="font"','/fonts/inter-latin.woff2" as="font"')
+        en = en.replace('/fonts/enj-arabic-v2.woff2" as="font"','/fonts/inter-latin.woff2" as="font"')
         en = en.replace('action="/services/"', 'action="/en/services/"')
         en = en.replace(f'data-alternate="/en{route}"', f'data-alternate="{route}"')
         en = re.sub(r'(<button id="lang"[^>]*>)English</button>', r'\1العربية</button>', en, count=1)

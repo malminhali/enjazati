@@ -51,6 +51,18 @@ const calculators = {
     const vat = v.mode === 'gross' ? price - net : roundedDivide(net * 15, 100);
     return [row('net', net), row('vat', vat), row('total', net + vat)];
   },
+  rett(v) {
+    if (v.confirmed !== 'yes') throw new CalculatorInputError('confirmed', 'taxConfirmation');
+    const base = amount(v, 'base', 1);
+    return [row('taxableBase', base), row('rett', roundedDivide(base * 5, 100))];
+  },
+  'saudi-share'(v) {
+    const total = decimal(v, 'total', { places: 0, min: 1, max: 1_000_000 });
+    const saudis = decimal(v, 'saudis', { places: 0, max: 1_000_000 });
+    if (saudis > total) throw new CalculatorInputError('saudis', 'headcount');
+    return [row('saudiShare', percentage(saudis, total), 'percent'),
+      row('others', total - saudis, 'integer')];
+  },
   discount(v) {
     const price = amount(v, 'price');
     const rate = decimal(v, 'rate', { max: 100 });
@@ -107,6 +119,10 @@ const calculators = {
 const labels = {
   net: ['المبلغ قبل الضريبة', 'Before VAT'],
   vat: ['ضريبة القيمة المضافة (15٪)', 'VAT (15%)'],
+  taxableBase: ['القيمة الخاضعة المدخلة', 'Taxable value entered'],
+  rett: ['ضريبة التصرفات العقارية التقديرية (5٪)', 'Estimated real estate transaction tax (5%)'],
+  saudiShare: ['نسبة الموظفين السعوديين', 'Saudi employee share'],
+  others: ['عدد الموظفين غير السعوديين', 'Non-Saudi employee count'],
   total: ['الإجمالي', 'Total'],
   discount: ['مبلغ الخصم', 'Discount amount'],
   final: ['السعر بعد الخصم', 'Discounted price'],
@@ -135,6 +151,8 @@ const messages = {
   positive: ['أدخل قيمة أكبر من صفر.', 'Enter a value greater than zero.'],
   date: ['أدخل تاريخاً صحيحاً بين 1900 و2100.', 'Enter a valid date between 1900 and 2100.'],
   order: ['تاريخ النهاية يجب أن يوافق تاريخ البداية أو يأتي بعده.', 'The end date must be on or after the start date.'],
+  taxConfirmation: ['أكد خضوع التصرف ومعرفة القيمة الخاضعة أو راجع خدمة التسجيل الرسمية.', 'Confirm the transaction is taxable and the taxable value is known, or check the official registration service.'],
+  headcount: ['عدد الموظفين السعوديين لا يمكن أن يتجاوز إجمالي الموظفين.', 'The number of Saudi employees cannot exceed the total headcount.'],
   undefined: ['غير محدد لأن المقام صفر', 'Undefined because the denominator is zero'],
 };
 

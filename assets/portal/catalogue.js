@@ -34,6 +34,8 @@
     address: ['العنوان الوطني', 'National address'],
     tax: ['الزكاة والضريبة', 'Zakat and tax'],
     estate: ['التحقق العقاري', 'Real estate verification'],
+    education: ['التعليم والتدريب', 'Education and training'],
+    safety: ['تراخيص السلامة', 'Safety licensing'],
   };
   const groupNames = {
     'Absher – Passports': 'residency', 'Absher – Traffic': 'vehicles', 'Absher – Civil affairs': 'civil',
@@ -43,6 +45,9 @@
     Musaned: 'domestic', Najiz: 'justice', 'Social security': 'support',
     'Citizen Account': 'support', 'SPL National Address': 'address', 'SPL Business Address': 'address',
     ZATCA: 'tax', REGA: 'estate',
+    'Ministry of Education': 'education', Noor: 'education', ETEC: 'education',
+    Jadarat: 'labour', 'Social Development Bank': 'support', Sakani: 'support',
+    'Salamah – Civil Defense': 'safety',
   };
   const pageSize = 12;
   let limit = pageSize;
@@ -118,7 +123,7 @@
     links.append(anchor(tr('المصدر الرسمي', 'Official source'), item.url, 'textlink'));
     if (item.guide) links.append(anchor(tr('اقرأ الدليل', 'Read the guide'), languagePath(item.guide), 'textlink'));
     if (item.tool) links.append(anchor(tr('حاسبة مرتبطة', 'Related calculator'), languagePath(item.tool), 'textlink'));
-    if (item.cat !== 'real-estate') {
+    if (item.cat !== 'real-estate' && !item.officialOnly) {
       const message = tr('السلام عليكم، أرغب بالاستفسار عن إمكانية المساعدة في: ', 'Hello, can you assist with: ')
         + tr(item.ar, item.en);
       links.append(anchor(tr('استفسر عن إمكانية المساعدة', 'Ask if we can assist'),
@@ -157,6 +162,8 @@
   }
 
   readQuery();
+  query.disabled = false;
+  document.querySelector('#search-form button[type="submit"]').disabled = false;
   configure();
   document.getElementById('search-form').addEventListener('submit', (event) => {
     event.preventDefault();
