@@ -1,5 +1,67 @@
-(()=>{'use strict';const body=document.body,root=document.documentElement,langBtn=document.getElementById('lang'),menu=document.getElementById('menu'),nav=document.getElementById('nav');let lang='ar';try{lang=localStorage.getItem('enjazatiLang')==='en'?'en':'ar'}catch(e){}const tr=(ar,en)=>lang==='ar'?ar:en;let refresh=()=>{};function setLang(v){lang=v;body.dataset.lang=v;root.lang=v;root.dir=v==='ar'?'rtl':'ltr';langBtn.textContent=v==='ar'?'English':'العربية';try{localStorage.setItem('enjazatiLang',v)}catch(e){}refresh()}langBtn.addEventListener('click',()=>setLang(lang==='ar'?'en':'ar'));menu.addEventListener('click',()=>menu.setAttribute('aria-expanded',String(nav.classList.toggle('open'))));nav.addEventListener('click',e=>{if(e.target.closest('a')){nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}});// Common navigation and contact polish, with no new account or tracking dependencies.
-const path=location.pathname.replace(/index\.html$/,'');const parent=path.startsWith('/branches/')?'/branches/':path.startsWith('/blog/')?'/blog/':path==='/properties/'?'/real-estate/':null;if(parent&&!nav.querySelector('[aria-current]')){const active=nav.querySelector('a[href="'+parent+'"]');if(active)active.setAttribute('aria-current','location')}
-menu.setAttribute('aria-controls','nav');document.addEventListener('pointerdown',e=>{if(nav.classList.contains('open')&&!nav.contains(e.target)&&!menu.contains(e.target)){nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}});addEventListener('resize',()=>{if(innerWidth>900&&nav.classList.contains('open')){nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}});
-const socials=document.querySelector('.socialgrid');if(socials&&!socials.querySelector('a[href^="https://wa.me/"]')){const a=document.createElement('a');a.className='social';a.href='https://wa.me/966560262818';a.setAttribute('aria-label','WhatsApp +966 56 026 2818');a.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.7A8.5 8.5 0 1 1 20.5 11.7Z M8 8q1 5 7 7"/></svg><span>WhatsApp<small>+966 56 026 2818</small></span>';socials.append(a)}
-setLang(lang);const panel=document.querySelector('[data-catalogue]');if(!panel)return;const q=document.getElementById('q'),cat=document.getElementById('cat'),platform=document.getElementById('platform'),results=document.getElementById('results'),count=document.getElementById('result-count'),more=document.getElementById('more'),empty=document.getElementById('empty'),emptyLink=document.getElementById('empty-link');let items=[],limit=12,failed=false;const params=new URLSearchParams(location.search),hash=new URLSearchParams(location.hash.slice(1));const initial=panel.dataset.catalogue;cat.value=initial==='all'?(params.get('category')||'all'):initial;if(!['all','individuals','business'].includes(cat.value))cat.value='all';if(initial!=='all'){cat.disabled=true}q.value=(hash.get('q')||params.get('q')||'').slice(0,100);const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();const msg=s=>'https://wa.me/966560262818?text='+encodeURIComponent(tr('السلام عليكم، أرغب بالاستفسار عن إمكانية المساعدة في: ','Hello, I would like to ask whether you can assist with: ')+s);function updateOptions(){const current=platform.value;const list=new Map();items.filter(x=>cat.value==='all'||x.cat===cat.value).forEach(x=>list.set(x.platform,tr(x.platform,x.platformEn)));platform.replaceChildren(new Option(tr('الكل','All'),'all'),...[...list.entries()].sort((a,b)=>a[1].localeCompare(b[1],lang)).map(([id,label])=>new Option(label,id)));if([...platform.options].some(o=>o.value===current))platform.value=current;for(const opt of cat.options)opt.textContent=opt.dataset[lang];q.placeholder=tr('نقل كفالة، رخصة محل، قوى…','Work permit, commercial licence, Qiwa…');q.setAttribute('aria-label',tr('ابحث عن إجراء','Search procedures'))}function score(x){const query=norm(q.value);if(!query)return 1;const n=norm(x.ar+' '+x.en),key=norm(x.keywords),p=norm(x.platform+' '+x.platformEn);if(n.includes(query))return 4;if(key.includes(query))return 3;if(p.includes(query))return 2;const all=n+' '+key+' '+p;return query.split(' ').every(t=>all.includes(t))?1:0}function draw(){if(failed){count.textContent=tr('تعذر تحميل الدليل. تواصل معنا مباشرة.','The directory could not be loaded. Please contact us directly.');return}const matches=items.filter(x=>(cat.value==='all'||x.cat===cat.value)&&(platform.value==='all'||x.platform===platform.value)).map(x=>({x,s:score(x)})).filter(v=>v.s).sort((a,b)=>b.s-a.s||a.x.id.localeCompare(b.x.id));count.textContent=tr(matches.length+' نتيجة للاستفسار',matches.length+' reference topics');results.replaceChildren();for(const {x} of matches.slice(0,limit)){const el=document.createElement('article');el.className='result';const small=document.createElement('small');small.textContent=tr(x.platform,x.platformEn);const h=document.createElement('h3');h.textContent=tr(x.ar,x.en);const links=document.createElement('div');links.className='resultlinks';const a=document.createElement('a');a.className='ask';a.href=msg(x.ar);a.textContent=tr('استفسر عن إمكانية المساعدة','Ask if we can assist');const official=document.createElement('a');official.className='textlink';official.href=x.url;official.target='_blank';official.rel='noopener';official.textContent=tr('المصدر الرسمي','Official source');links.append(a,official);el.append(small,h,links);results.append(el)}more.hidden=matches.length<=limit;empty.hidden=matches.length>0;emptyLink.href=msg(q.value||tr('إجراء إلكتروني','an electronic procedure'))}function reset(){limit=12;draw()}document.getElementById('search-form').addEventListener('submit',e=>{e.preventDefault();reset()});q.addEventListener('input',reset);cat.addEventListener('change',()=>{updateOptions();reset()});platform.addEventListener('change',reset);more.addEventListener('click',()=>{limit+=12;draw()});refresh=()=>{updateOptions();draw()};fetch('/assets/portal/catalogue.json').then(r=>{if(!r.ok)throw Error('Catalogue unavailable');return r.json()}).then(data=>{items=data;refresh()}).catch(()=>{failed=true;draw();empty.hidden=false;emptyLink.href=msg(q.value||'إجراء إلكتروني')});})();
+(() => {
+  'use strict';
+
+  const root = document.documentElement;
+  const langButton = document.getElementById('lang');
+  const menu = document.getElementById('menu');
+  const nav = document.getElementById('nav');
+  let lang = root.lang === 'en' ? 'en' : 'ar';
+  const alternate = langButton.dataset.alternate;
+  if (!alternate) {
+    try {
+      const saved = localStorage.getItem('enjazatiLang');
+      if (saved === 'en' || saved === 'ar') lang = saved;
+    } catch {}
+  }
+
+  function setLanguage(value, persist = false) {
+    lang = value;
+    document.body.dataset.lang = value;
+    root.lang = value;
+    root.dir = value === 'ar' ? 'rtl' : 'ltr';
+    langButton.textContent = value === 'ar' ? 'English' : 'العربية';
+    langButton.lang = value === 'ar' ? 'en' : 'ar';
+    menu.setAttribute('aria-label', value === 'ar' ? 'القائمة' : 'Menu');
+    nav.setAttribute('aria-label', value === 'ar' ? 'القائمة الرئيسية' : 'Main navigation');
+    if (persist) {
+      try { localStorage.setItem('enjazatiLang', value); } catch {}
+    }
+    document.dispatchEvent(new Event('portal-languagechange'));
+  }
+
+  function setMenu(open) {
+    nav.classList.toggle('open', open);
+    menu.setAttribute('aria-expanded', String(open));
+  }
+
+  langButton.addEventListener('click', () => {
+    if (alternate) {
+      location.assign(alternate + location.search + location.hash);
+    } else {
+      setLanguage(lang === 'ar' ? 'en' : 'ar', true);
+    }
+  });
+  menu.setAttribute('aria-controls', 'nav');
+  menu.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  nav.addEventListener('click', (event) => {
+    if (event.target.closest('a')) setMenu(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !nav.classList.contains('open')) return;
+    setMenu(false);
+    menu.focus();
+  });
+  document.addEventListener('pointerdown', (event) => {
+    if (!nav.contains(event.target) && !menu.contains(event.target)) setMenu(false);
+  });
+  matchMedia('(min-width: 1001px)').addEventListener('change', () => setMenu(false));
+
+  const prefix = alternate && lang === 'en' ? '/en' : '';
+  const path = location.pathname.slice(prefix.length).replace(/index\.html$/, '');
+  const parent = path.startsWith('/branches/') ? '/branches/'
+    : path.startsWith('/blog/') ? '/blog/' : path === '/properties/' ? '/real-estate/' : null;
+  if (parent && !nav.querySelector('[aria-current]')) {
+    nav.querySelector('a[href="' + prefix + parent + '"]')?.setAttribute('aria-current', 'location');
+  }
+  setLanguage(lang);
+})();
