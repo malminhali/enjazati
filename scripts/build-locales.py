@@ -22,15 +22,13 @@ LOCALES = {
     '/branches/1/': ('Enjazati 1', 'Business and electronic service enquiries in Al-Hofuf, near King Fahd Hospital.'),
     '/branches/2/': ('Enjazati 2', 'Business and electronic service enquiries in Al-Hofuf, Al Sulaimaniyah 3rd.'),
     '/branches/real-estate/': ('Enjazati Real Estate branch', 'Contact Enjazati Real Estate in Al-Hofuf.'),
-    '/business/': ('Business services', 'Explore official procedures for Saudi businesses and enquire about administrative assistance in Al-Ahsa.'),
     '/contact/': ('Contact Enjazati', 'Find the correct Enjazati branch phone, WhatsApp and management contacts.'),
-    '/individuals/': ('Individual services', 'Find official procedures for individuals and enquire about electronic service assistance in Al-Ahsa.'),
     '/privacy/': ('Privacy', 'How Enjazati handles website search, calculator inputs and contact links.'),
     '/properties/': ('Property listings', 'Browse approved Enjazati real estate listings as they become available.'),
     '/real-estate/': ('Enjazati Real Estate', 'Real estate enquiries, official verification resources and property calculators for Al-Ahsa.'),
     '/services/': ('Service catalogue', 'Search official Saudi procedures by everyday terms, category, topic or platform.'),
-    '/tools/': ('Free tools and calculators', 'Calculate VAT, discounts, budgets, rental yield, date intervals and more without an account.'),
 }
+LOCALES.update({'/individuals/': ['Electronic services', 'Electronic services for individuals and families, from preparing applications to following up.'], '/business/': ['Business services', 'Support for setting up your business, handling employee paperwork, obtaining licences and managing online requests.'], '/tools/vat-calculator/': ['VAT calculator', 'Add 15% VAT or extract it from an inclusive price.'], '/tools/discount-calculator/': ['Discount calculator', 'Compare the discount amount and final price.'], '/tools/profit-margin-calculator/': ['Profit margin calculator', 'Calculate profit or loss and compare both percentages.'], '/tools/monthly-budget-calculator/': ['Monthly budget calculator', 'See what remains after your monthly commitments.'], '/tools/rental-yield-calculator/': ['Rental yield calculator', 'Compare gross yield and yield after annual operating costs.'], '/tools/price-per-square-metre/': ['Price per square metre calculator', 'Compare property prices using the same definition of area.'], '/tools/rent-instalment-calculator/': ['Rent instalment calculator', 'Divide total rent into instalments.'], '/tools/real-estate-transaction-tax-calculator/': ['Real estate transaction tax calculator', 'Estimate the tax when the taxable value and treatment are known.'], '/tools/saudi-employee-share-calculator/': ['Saudi employee share calculator', 'Calculate the Saudi share of your actual workforce headcount.'], '/tools/overtime-calculator/': ['Overtime pay calculator', 'Estimate Saudi overtime pay for hours already classified as overtime.'], '/tools/end-of-service-calculator/': ['End-of-service award calculator', 'Estimate your award using completed years and months of service.'], '/tools/date-difference-calculator/': ['Date difference calculator', 'Find elapsed days or include both endpoints.'], '/tools/': ['Tools & calculators', 'Free calculators for work, money, property and dates. Choose a tool to get started.']})
 COMPANY = {'ar': 'مجموعة إنجازاتي', 'en': 'Enjazati Group'}
 GUIDES = {'ar': 'الأدلة', 'en': 'Guides'}
 NAV = re.compile(r'(<a\b[^>]*\bhref=")(/[^"]*)(")', re.I)
@@ -78,6 +76,8 @@ def breadcrumbs(source, route, label, lang):
     crumbs = [(COMPANY[lang], prefix + '/')]
     if route.startswith('/blog/') and route != '/blog/':
         crumbs.append((GUIDES[lang], prefix + '/blog/'))
+    if route.startswith('/tools/') and route != '/tools/':
+        crumbs.append(('الأدوات والحاسبات' if lang == 'ar' else 'Tools & calculators', prefix + '/tools/'))
     crumbs.append((label, prefix + route))
     data = {
         '@context': 'https://schema.org',

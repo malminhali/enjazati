@@ -45,6 +45,30 @@ const row = (key, value, type = 'money') => ({ key, value, type });
 const percentage = (part, total) => total ? 100 * part / total : null;
 const roundedDivide = (numerator, denominator) => Math.floor((numerator + denominator / 2) / denominator);
 const calculators = {
+  overtime(v) {
+    const actual = amount(v, 'actual', 1);
+    const basic = amount(v, 'basic', 1);
+    if (basic > actual) throw new CalculatorInputError('basic', 'basicWage');
+    const daily = decimal(v, 'daily', { min: 1, max: 24 });
+    const hours = decimal(v, 'hours', { max: 1000 });
+    const hourlyExtra = (actual + basic / 2) / (30 * (daily / 100));
+    return [row('hourlyOvertime', Math.round(hourlyExtra)),
+      row('overtimeTotal', Math.round(hourlyExtra * (hours / 100)))];
+  },
+  'end-of-service'(v) {
+    const salary = amount(v, 'salary', 1);
+    const years = decimal(v, 'years', { places: 0, max: 80 });
+    const months = years * 12 + decimal(v, 'months', { places: 0, max: 11 });
+    const total = salary * (Math.min(months, 60) + 2 * Math.max(0, months - 60)) / 24;
+    let entitlement = 1;
+    if (v.reason === 'resignation') {
+      if (months < 24) entitlement = 0;
+      else if (months <= 60) entitlement = 1 / 3;
+      else if (months < 120) entitlement = 2 / 3;
+    }
+    return [row('baseAward', Math.round(total)), row('entitlement', entitlement * 100, 'percent'),
+      row('award', Math.round(total * entitlement))];
+  },
   vat(v) {
     const price = amount(v, 'price');
     const net = v.mode === 'gross' ? roundedDivide(price * 100, 115) : price;
@@ -117,6 +141,11 @@ const calculators = {
 };
 
 const labels = {
+  hourlyOvertime: ['أجر الساعة الإضافية (مقرب)', 'Overtime hourly rate (rounded)'],
+  overtimeTotal: ['إجمالي المقابل النقدي', 'Total overtime pay'],
+  baseAward: ['المكافأة قبل احتساب سبب الانتهاء', 'Base award'],
+  entitlement: ['النسبة المستحقة', 'Applicable share'],
+  award: ['المكافأة التقديرية', 'Estimated award'],
   net: ['المبلغ قبل الضريبة', 'Before VAT'],
   vat: ['ضريبة القيمة المضافة (15٪)', 'VAT (15%)'],
   taxableBase: ['القيمة الخاضعة المدخلة', 'Taxable value entered'],
@@ -142,6 +171,7 @@ const labels = {
   remaining: ['عدد الدفعات المتبقية', 'Remaining instalments'],
 };
 const messages = {
+  basicWage: ['أدخل أجرًا أساسيًا لا يتجاوز الأجر الفعلي.', 'Enter a basic wage no higher than the actual wage.'],
   number: ['أدخل رقماً موجباً أو صفراً بمنزلتين عشريتين على الأكثر (ثلاث للمساحة).', 'Enter a non-negative number with up to two decimal places (three for area).'],
   whole: ['أدخل عدداً صحيحاً.', 'Enter a whole number.'],
   required: ['أدخل القيمة لاستكمال الحساب.', 'Enter a value to complete the calculation.'],
@@ -244,27 +274,3 @@ if (typeof document !== 'undefined') {
   document.querySelectorAll('[data-calculator]').forEach(initCalculator);
 }
 if (typeof module === 'object') module.exports = { calculators, CalculatorInputError };
-
-if (typeof document !== 'undefined') {
-  const picker = document.getElementById('tool-picker');
-  if (picker) {
-    const panels = document.querySelectorAll('.tool-panel');
-    function showSelection() {
-      const selected = location.hash.slice(1);
-      picker.value = '';
-      for (const panel of panels) {
-        panel.hidden = panel.id !== selected;
-        if (!panel.hidden) picker.value = selected;
-      }
-    }
-    picker.addEventListener('change', () => {
-      const url = new URL(location.href);
-      url.hash = picker.value;
-      history.pushState(null, '', url);
-      showSelection();
-    });
-    window.addEventListener('popstate', showSelection);
-    window.addEventListener('hashchange', showSelection);
-    showSelection();
-  }
-}
