@@ -13,7 +13,12 @@ const calculatorRoutes = {
   "end-of-service": "end-of-service-calculator",
   "dates": "date-difference-calculator"
 };
-const calculator = location.hash.slice(1);
-if (Object.hasOwn(calculatorRoutes, calculator)) {
-  location.replace(calculatorRoutes[calculator] + '/');
+function followCalculatorLink() {
+  const calculator = location.hash.slice(1);
+  if (Object.hasOwn(calculatorRoutes, calculator)) {
+    location.replace(calculatorRoutes[calculator] + '/');
+  }
 }
+
+window.addEventListener('hashchange', followCalculatorLink);
+followCalculatorLink();

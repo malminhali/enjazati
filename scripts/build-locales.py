@@ -27,8 +27,25 @@ LOCALES = {
     '/properties/': ('Property listings', 'Browse approved Enjazati real estate listings as they become available.'),
     '/real-estate/': ('Enjazati Real Estate', 'Real estate enquiries, official verification resources and property calculators for Al-Ahsa.'),
     '/services/': ('Service catalogue', 'Search official Saudi procedures by everyday terms, category, topic or platform.'),
+    '/individuals/': ('Electronic services', 'Electronic services for individuals and families, from preparing applications to following up.'),
+    '/business/': ('Business services', 'Support for setting up your business, handling employee paperwork, obtaining licences and managing online requests.'),
+    '/tools/vat-calculator/': ('VAT calculator', 'Add 15% VAT or extract it from an inclusive price.'),
+    '/tools/discount-calculator/': ('Discount calculator', 'Compare the discount amount and final price.'),
+    '/tools/profit-margin-calculator/': ('Profit margin calculator', 'Calculate profit or loss and compare both percentages.'),
+    '/tools/monthly-budget-calculator/': ('Monthly budget calculator', 'See what remains after your monthly commitments.'),
+    '/tools/rental-yield-calculator/': ('Rental yield calculator', 'Compare gross yield and yield after annual operating costs.'),
+    '/tools/price-per-square-metre/': ('Price per square metre calculator', 'Compare property prices using the same definition of area.'),
+    '/tools/rent-instalment-calculator/': ('Rent instalment calculator', 'Divide total rent into instalments.'),
+    '/tools/real-estate-transaction-tax-calculator/': ('Real estate transaction tax calculator', 'Estimate the tax when the taxable value and treatment are known.'),
+    '/tools/saudi-employee-share-calculator/': ('Saudi employee share calculator', 'Calculate the Saudi share of your actual workforce headcount.'),
+    '/tools/overtime-calculator/': ('Overtime pay calculator', 'Estimate Saudi overtime pay for hours already classified as overtime.'),
+    '/tools/end-of-service-calculator/': ('End-of-service award calculator', 'Estimate your award using completed years and months of service.'),
+    '/tools/date-difference-calculator/': ('Date difference calculator', 'Find elapsed days or include both endpoints.'),
+    '/tools/': ('Tools & calculators', 'Free calculators for work, money, property and dates. Choose a tool to get started.'),
+    '/business/employee-transfer/': ('Qiwa employee transfer', 'Help for establishments preparing and tracking employee transfer requests in Qiwa.'),
+    '/business/health-certificate/': ('Balady health certificate', 'Help for food and public health establishments applying for employee health certificates.'),
+    '/business/annual-confirmation/': ('Annual commercial registration confirmation', 'Review your registration information and prepare annual confirmation for your business type.'),
 }
-LOCALES.update({'/individuals/': ['Electronic services', 'Electronic services for individuals and families, from preparing applications to following up.'], '/business/': ['Business services', 'Support for setting up your business, handling employee paperwork, obtaining licences and managing online requests.'], '/tools/vat-calculator/': ['VAT calculator', 'Add 15% VAT or extract it from an inclusive price.'], '/tools/discount-calculator/': ['Discount calculator', 'Compare the discount amount and final price.'], '/tools/profit-margin-calculator/': ['Profit margin calculator', 'Calculate profit or loss and compare both percentages.'], '/tools/monthly-budget-calculator/': ['Monthly budget calculator', 'See what remains after your monthly commitments.'], '/tools/rental-yield-calculator/': ['Rental yield calculator', 'Compare gross yield and yield after annual operating costs.'], '/tools/price-per-square-metre/': ['Price per square metre calculator', 'Compare property prices using the same definition of area.'], '/tools/rent-instalment-calculator/': ['Rent instalment calculator', 'Divide total rent into instalments.'], '/tools/real-estate-transaction-tax-calculator/': ['Real estate transaction tax calculator', 'Estimate the tax when the taxable value and treatment are known.'], '/tools/saudi-employee-share-calculator/': ['Saudi employee share calculator', 'Calculate the Saudi share of your actual workforce headcount.'], '/tools/overtime-calculator/': ['Overtime pay calculator', 'Estimate Saudi overtime pay for hours already classified as overtime.'], '/tools/end-of-service-calculator/': ['End-of-service award calculator', 'Estimate your award using completed years and months of service.'], '/tools/date-difference-calculator/': ['Date difference calculator', 'Find elapsed days or include both endpoints.'], '/tools/': ['Tools & calculators', 'Free calculators for work, money, property and dates. Choose a tool to get started.']})
 COMPANY = {'ar': 'مجموعة إنجازاتي', 'en': 'Enjazati Group'}
 GUIDES = {'ar': 'الأدلة', 'en': 'Guides'}
 NAV = re.compile(r'(<a\b[^>]*\bhref=")(/[^"]*)(")', re.I)
@@ -78,6 +95,8 @@ def breadcrumbs(source, route, label, lang):
         crumbs.append((GUIDES[lang], prefix + '/blog/'))
     if route.startswith('/tools/') and route != '/tools/':
         crumbs.append(('الأدوات والحاسبات' if lang == 'ar' else 'Tools & calculators', prefix + '/tools/'))
+    if route.startswith('/business/') and route != '/business/':
+        crumbs.append(('خدمات الأعمال' if lang == 'ar' else 'Business services', prefix + '/business/'))
     crumbs.append((label, prefix + route))
     data = {
         '@context': 'https://schema.org',
